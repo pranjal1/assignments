@@ -1,3 +1,9 @@
+"""
+Implementing Linear Discriminant Analyis
+Author: Pranjal Dhakal
+"""
+
+
 import urllib.request
 from collections import defaultdict
 from typing import List, Union
