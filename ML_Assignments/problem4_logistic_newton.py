@@ -104,7 +104,6 @@ class LogisticRegression:
 
         for i in range(len(bad_images)):
             axarr[i].imshow(bad_images[i])
-        f.savefig('demo.png', bbox_inches='tight')
         plt.show(block=True)
 
 
