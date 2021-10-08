@@ -211,7 +211,7 @@ class PancakeSolver:
             # reciprocal of the tie-breaker (conflict solver) is taken as we want
             # the fringe to be sorted in ascending for fn and descending for tie-breaking
             self.fringe = sorted(
-                self.fringe, key=lambda x: [x.fn, 1/x.conflict_solve_value]
+                self.fringe, key=lambda x: [x.fn, 1 / x.conflict_solve_value]
             )
 
     def bfs(self):
