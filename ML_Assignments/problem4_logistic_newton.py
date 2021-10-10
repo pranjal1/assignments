@@ -144,6 +144,7 @@ class LogisticRegression:
         ]
         bad_results_sorted = sorted(bad_results, key=lambda x: x[1], reverse=True)
         top_num_bad_res = [i for i, _ in bad_results_sorted[:num]]
+        print([self.test_prediction_confidence[0, i] for i in top_num_bad_res])
         bad_images = [self.get_image(i, False, False) for i in top_num_bad_res]
 
         plt.figure()
