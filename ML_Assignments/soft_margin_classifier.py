@@ -33,9 +33,6 @@ class SoftMarginClassifier:
             low=-0.1, high=0.1, size=(self.training_x.shape[0], 1)
         )
         self.B = 0.0
-
-        # lambda value is set to 10
-        self.lmbd = 10
         self.theta_update_threshold = theta_update_threshold
 
     def get_image(

@@ -6,10 +6,10 @@ class NonLinearRegression:
     def __init__(self, train_x, train_y, lmbd=0):
 
         self.X = np.expand_dims(train_x, axis=1)
-        self.phi_x = self.get_phi_x(self.X)
-        self.phi_tilde = self.phi_x - np.mean(self.phi_x, axis=0)
+        self.PHI_X = self.get_phi_x(self.X)
+        self.PHI_TILDE = self.PHI_X - np.mean(self.PHI_X, axis=0)
         self.Y = np.expand_dims(train_y, axis=1)
-        self.Y_tilde = self.Y - np.mean(self.Y)
+        self.Y_TILDE = self.Y - np.mean(self.Y)
         self.lmbd = lmbd
 
     def get_phi_x(self, X):
@@ -20,21 +20,26 @@ class NonLinearRegression:
 
     def get_w_b_hat(self):
         self.w_hat = np.linalg.inv(
-            self.phi_tilde.T @ self.phi_tilde
-            + self.phi_tilde.shape[0] * self.lmbd * np.eye(self.phi_tilde.shape[1])
-        ) @ (self.phi_tilde.T @ self.Y_tilde)
-        self.b_hat = np.mean(self.Y, axis=0) - np.mean(self.phi_x, axis=0) @ self.w_hat
+            self.PHI_TILDE.T @ self.PHI_TILDE
+            + self.PHI_TILDE.shape[0] * self.lmbd * np.eye(self.PHI_TILDE.shape[1])
+        ) @ (self.PHI_TILDE.T @ self.Y_TILDE)
+        self.b_hat = np.mean(self.Y, axis=0) - self.w_hat.T @ np.mean(
+            self.PHI_X, axis=0
+        )
 
     def pred(self, X):
         X = np.expand_dims(X, axis=1)
-        X = self.get_phi_x(X)
-        return X @ self.w_hat + self.b_hat
+        phi_x = self.get_phi_x(
+            X
+        ).T  # n phi_x's have dx1 shape, PHI_X on the other hand has shape dxn
+        return self.w_hat.T @ phi_x + self.b_hat
 
     def get_error(self, X, Y):
         pred = self.pred(X)
-        tgt = np.expand_dims(Y, axis=1)
+        tgt = np.expand_dims(Y, axis=0)
         error = np.sqrt(np.mean(np.power(tgt - pred, 2)))
         return error
+
 
 if __name__ == "__main__":
     np.random.seed(0)
@@ -45,11 +50,12 @@ if __name__ == "__main__":
     xtest = np.linspace(0, 3, m)
     ytest = -(xtest ** 2) + 2 * xtest + 2 + 0.5 * np.random.randn(m)
 
-
-    nlr = NonLinearRegression(xtrain, ytrain, lmbd=0.1)
+    nlr = NonLinearRegression(xtrain, ytrain, lmbd=1000)
     nlr.get_w_b_hat()
     print(nlr.w_hat, nlr.b_hat)
     ypred = nlr.pred(xtest)
+    print(nlr.get_error(xtrain, ytrain))
+
     plt.plot(xtrain, ytrain, "o")
     plt.plot(xtest, ytest, "x")
     plt.plot(xtest, -(xtest ** 2) + 2 * xtest + 2)
@@ -57,7 +63,7 @@ if __name__ == "__main__":
     plt.legend(
         ["training samples", "test samples", "true line", "prediction (lambda = 0.1)"]
     )
-
+    plt.show()
 
     results = []
     for lmbd in np.arange(0.001, 0.1, 0.001):
@@ -66,7 +72,6 @@ if __name__ == "__main__":
         training_error = nlr.get_error(xtrain, ytrain)
         testing_error = nlr.get_error(xtest, ytest)
         results.append([lmbd, training_error, testing_error])
-
 
     N = len(results)
     training_err = [x[1] for x in results]
