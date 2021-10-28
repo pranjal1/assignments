@@ -37,7 +37,7 @@ class NonLinearRegression:
     def get_error(self, X, Y):
         pred = self.pred(X)
         tgt = np.expand_dims(Y, axis=0)
-        error = np.sqrt(np.mean(np.power(tgt - pred, 2)))
+        error = np.mean(np.power(tgt - pred, 2))
         return error
 
 
@@ -50,16 +50,17 @@ if __name__ == "__main__":
     xtest = np.linspace(0, 3, m)
     ytest = -(xtest ** 2) + 2 * xtest + 2 + 0.5 * np.random.randn(m)
 
-    nlr = NonLinearRegression(xtrain, ytrain, lmbd=1000)
+    nlr = NonLinearRegression(xtrain, ytrain, lmbd=0.1)
     nlr.get_w_b_hat()
-    print(nlr.w_hat, nlr.b_hat)
-    ypred = nlr.pred(xtest)
+    print("W = {}".format(nlr.w_hat))
+    print("B = {}".format(nlr.b_hat))
+    ypred = nlr.pred(xtrain)
     print(nlr.get_error(xtrain, ytrain))
 
     plt.plot(xtrain, ytrain, "o")
     plt.plot(xtest, ytest, "x")
     plt.plot(xtest, -(xtest ** 2) + 2 * xtest + 2)
-    plt.plot(xtest, np.squeeze(ypred), "-")
+    plt.plot(xtrain, np.squeeze(ypred), "-")
     plt.legend(
         ["training samples", "test samples", "true line", "prediction (lambda = 0.1)"]
     )
