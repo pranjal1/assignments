@@ -32,7 +32,7 @@ class Cell:
             self.actions = ["up", "right", "down", "left"]
             self.reward = reward
         # initial q_values for each cell is 0
-        self.q_values = {a: 0 for a in self.actions}
+        self.q_values = {a: 0.0 for a in self.actions}
 
 
 class QLearning:
